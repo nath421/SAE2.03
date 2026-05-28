@@ -1,0 +1,80 @@
+services:
+
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb_Genillon
+    restart: unless-stopped
+
+    environment:
+      MARIADB_ROOT_PASSWORD: N@than42421
+      MARIADB_DATABASE: Wordpress
+      MARIADB_USER: nath
+      MARIADB_PASSWORD: N@than42421
+
+    ports:
+      - "3306:3306"
+
+    volumes:
+      - ./volumes/mariadb_Genillon:/var/lib/mysql
+
+    networks:
+      - sae23_net
+
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin_Genillon
+    restart: unless-stopped
+
+    depends_on:
+      - mariadb
+
+    ports:
+      - "9000:80"
+
+    environment:
+      PMA_HOST: mariadb
+      PMA_PORT: 3306
+
+    networks:
+      - sae23_net
+
+
+  wordpress:
+    image: wordpress:latest
+    container_name: wordpress_Genillon
+    restart: unless-stopped
+
+    depends_on:
+      - mariadb
+
+    ports:
+      - "80:80"
+
+    environment:
+      WORDPRESS_DB_HOST: mariadb:3306
+      WORDPRESS_DB_USER: nath
+      WORDPRESS_DB_PASSWORD: N@than42421
+      WORDPRESS_DB_NAME: Wordpress
+
+    volumes:
+      - ./volumes/htmlwordpress_Genillon:/var/www/html
+
+    networks:
+      - sae23_net
+
+
+  portfolio:
+    build: ./portfolio
+    container_name: portfolio_Genillon
+    restart: unless-stopped
+
+    ports:
+      - "82:80"
+
+    networks:
+      - sae23_net
+
+
+networks:
+  sae23_net:
